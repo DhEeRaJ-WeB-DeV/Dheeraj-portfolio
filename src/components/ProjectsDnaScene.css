@@ -1,0 +1,15 @@
+.proj-dna-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.proj-dna-scene canvas {
+  display: block;
+}
+
+/* The ring keeps its rotation axis at every viewport width (see
+   Projects.jsx useSpiralDims), so the helix/web canvas stays mounted
+   and spinning in lockstep with it on phones and tablets too — no
+   breakpoint hides it. */

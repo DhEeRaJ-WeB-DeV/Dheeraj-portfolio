@@ -1,0 +1,13 @@
+.cursor-jellyfish-root {
+  position: fixed;
+  inset: 0;
+  z-index: 90; /* above page content, below .nav (100) and its menus */
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.cursor-jellyfish-root canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}

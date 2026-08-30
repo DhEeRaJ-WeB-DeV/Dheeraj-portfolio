@@ -1,0 +1,295 @@
+.game-showcase {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The "SWORD QUEST" logo, sitting above the play banner and its shrine
+   decorations. Pre-cut transparent artwork, so it just needs a matching
+   glow to feel lit by the same blue light as everything below it. */
+.game-showcase-title {
+  display: block;
+  width: min(78vw, 480px);
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 0 18px rgba(var(--accent-frontend-rgb), 0.45));
+}
+
+/* Title + its two flanking chaos-banners, sitting in a row. The banners
+   are pushed down from the top so they read as pennants hanging beside
+   the title rather than lining up flush with it. */
+.game-showcase-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(4px, 2vw, 22px);
+  width: 100%;
+  margin-bottom: clamp(6px, 2vw, 18px);
+}
+
+.game-showcase-title-banner {
+  display: block;
+  width: clamp(72px, 11vw, 148px);
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  flex: 0 0 auto;
+  margin-top: clamp(30px, 6.5vw, 70px);
+  opacity: 0.85;
+  filter: drop-shadow(0 0 10px rgba(var(--accent-frontend-rgb), 0.35))
+    brightness(0.85) saturate(0.95);
+  animation: game-side-flicker 4.2s ease-in-out infinite;
+}
+
+.game-showcase-title-banner-mirrored {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 640px) {
+  .game-showcase-title-banner {
+    width: clamp(48px, 13vw, 84px);
+    margin-top: clamp(20px, 8.5vw, 44px);
+  }
+}
+
+@media (max-width: 460px) {
+  .game-showcase-title-row {
+    gap: 2px;
+  }
+  .game-showcase-title-banner {
+    display: none;
+  }
+}
+
+/* Short callout above the play banner — plain text (not baked into an
+   image) so it stays crisp at any size and easy to change later. */
+.game-showcase-tagline {
+  margin: 0 0 clamp(18px, 3.5vw, 34px);
+  text-align: center;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+  letter-spacing: 0.04em;
+  color: rgba(var(--accent-frontend-rgb), 0.9);
+  text-shadow: 0 0 12px rgba(var(--accent-frontend-rgb), 0.5);
+}
+
+.game-showcase-flanked {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(2px, 1.5vw, 20px);
+  width: 100%;
+  max-width: 980px;
+}
+
+.game-showcase-play {
+  position: relative;
+  display: block;
+  width: min(72vw, 420px);
+  flex: 0 1 auto;
+  aspect-ratio: 2135 / 736;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.game-showcase-play-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  filter: drop-shadow(0 0 14px rgba(var(--accent-frontend-rgb), 0.35));
+  transition: filter 0.25s ease;
+}
+
+/* Soft breathing glow behind the whole banner, in the site's own accent
+   color, so the artwork's edges melt into the dark page instead of
+   looking like a pasted-on image. */
+.game-showcase-play-glow {
+  position: absolute;
+  inset: -18% -6%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(var(--accent-frontend-rgb), 0.35),
+    transparent 72%
+  );
+  filter: blur(26px);
+  animation: game-play-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes game-play-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.03);
+  }
+}
+
+/* Flanking shrine clusters — a blue flame brazier on each side of the
+   play banner. (The chaos-banner flags now hang beside the title above,
+   rather than behind these braziers.) */
+.game-showcase-cluster {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(78px, 12.5vw, 168px);
+  height: clamp(130px, 19vw, 220px);
+}
+
+.game-showcase-cluster-mirrored {
+  transform: scaleX(-1);
+}
+
+.game-showcase-cluster-brazier {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: auto;
+  object-fit: contain;
+  object-position: bottom center;
+  user-select: none;
+  pointer-events: none;
+
+  z-index: 2;
+  height: 100%;
+  transform-origin: 50% 85%;
+  filter: drop-shadow(0 0 14px rgba(var(--accent-frontend-rgb), 0.55))
+    brightness(1);
+  animation: game-flame-flicker 2.2s ease-in-out infinite;
+  animation-delay: 0.4s;
+}
+
+/* Brisker, higher-contrast flicker for the brazier flame itself — the
+   cloth-sway keyframe below was too subtle to read as fire, so this pairs
+   a faster glow pulse with a little scale/skew jitter on the flame. */
+@keyframes game-flame-flicker {
+  0% {
+    transform: translateX(-50%) scale(1) skewX(0deg);
+    opacity: 0.88;
+    filter: drop-shadow(0 0 10px rgba(var(--accent-frontend-rgb), 0.35))
+      brightness(0.95);
+  }
+  22% {
+    transform: translateX(-50%) scale(1.025) skewX(0.6deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 22px rgba(var(--accent-frontend-rgb), 0.75))
+      brightness(1.15);
+  }
+  48% {
+    transform: translateX(-50%) scale(0.97) skewX(-0.8deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 12px rgba(var(--accent-frontend-rgb), 0.4))
+      brightness(0.92);
+  }
+  70% {
+    transform: translateX(-50%) scale(1.03) skewX(0.4deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 24px rgba(var(--accent-frontend-rgb), 0.8))
+      brightness(1.2);
+  }
+  100% {
+    transform: translateX(-50%) scale(1) skewX(0deg);
+    opacity: 0.88;
+    filter: drop-shadow(0 0 10px rgba(var(--accent-frontend-rgb), 0.35))
+      brightness(0.95);
+  }
+}
+
+@keyframes game-side-flicker {
+  0%,
+  100% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 10px rgba(var(--accent-frontend-rgb), 0.32));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 18px rgba(var(--accent-frontend-rgb), 0.55));
+  }
+}
+
+@media (max-width: 640px) {
+  .game-showcase-cluster {
+    width: clamp(46px, 15vw, 90px);
+    height: clamp(90px, 22vw, 140px);
+  }
+}
+
+@media (max-width: 460px) {
+  .game-showcase-flanked {
+    gap: 2px;
+  }
+  .game-showcase-cluster {
+    display: none;
+  }
+}
+
+.game-showcase-play:hover {
+  transform: scale(1.03);
+}
+
+.game-showcase-play:hover .game-showcase-play-img {
+  filter: drop-shadow(0 0 20px rgba(var(--accent-frontend-rgb), 0.55));
+}
+
+.game-showcase-play:active {
+  transform: scale(0.99);
+}
+
+.game-showcase-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+}
+
+.game-showcase-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.game-showcase-controls {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  z-index: 10000;
+  display: flex;
+  gap: 10px;
+}
+
+.game-showcase-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.game-showcase-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}

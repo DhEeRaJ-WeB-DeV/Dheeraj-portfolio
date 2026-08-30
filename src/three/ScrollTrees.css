@@ -1,0 +1,27 @@
+.scroll-trees-root {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  /* Dimmed instead of blurred — keeps the branch/scanline/rim-glow detail
+     from TreeModel3D.jsx sharp, just less bright, so it reads as sitting
+     back in the scene rather than a crisp foreground object. */
+  opacity: 0.78;
+}
+
+.scroll-trees-root canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Hide once the viewport is too narrow to give the trees clear side gutters
+   next to the centered content column. The component also unmounts entirely
+   below this breakpoint (see ScrollTrees.jsx) so the WebGL context isn't
+   kept alive for nothing; this media query is a defensive fallback. */
+@media (max-width: 1300px) {
+  .scroll-trees-root {
+    display: none;
+  }
+}
