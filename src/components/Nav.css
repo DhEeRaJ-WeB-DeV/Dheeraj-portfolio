@@ -1,0 +1,233 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.nav-scrolled {
+  background: rgba(var(--bg-elevated-rgb), 0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  gap: 24px;
+}
+
+.nav-jellyfish-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+/* The cursor jellyfish trails the mouse pointer — meaningless on a
+   touch-only device (there's no hovering cursor for it to follow), and
+   summoning it there would just add an extra always-animating WebGL
+   canvas on top of everything else already running on the page. Scoped
+   to (hover: none) rather than a width breakpoint so it only affects
+   actual touchscreens, never a mouse-driven desktop browser. */
+@media (hover: none) and (pointer: coarse) {
+  .nav-jellyfish-wrap {
+    display: none;
+  }
+}
+
+.nav-jellyfish-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+/* Wraps NavJellyfishIcon so a click can give it a quick tactile
+   "kick" — compress then spring back — independent of the 3D dust
+   cloud's own shader-driven idle motion. The icon itself never
+   unmounts: it's the cursor jellyfish that detaches and swims off. */
+.nav-jellyfish-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transform: scale(1);
+  transition: transform 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-jellyfish-icon-wrap.is-kicking {
+  transform: scale(0.76);
+  transition: transform 0.09s ease-in;
+}
+
+.nav-jellyfish-icon-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* A quick expanding, fading ring at the moment of click — reads as the
+   icon "pushing off" the cursor jellyfish (or receiving it back), since
+   the icon itself stays docked in the nav rather than disappearing. */
+.nav-jellyfish-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-frontend);
+  pointer-events: none;
+  animation: nav-jellyfish-pulse-anim 0.5s ease-out forwards;
+}
+
+@keyframes nav-jellyfish-pulse-anim {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+.nav-jellyfish-btn:hover {
+  border-color: var(--accent-frontend);
+  color: var(--accent-frontend);
+}
+
+.nav-jellyfish-btn:active {
+  transform: scale(0.92);
+}
+
+.nav-jellyfish-btn.is-active {
+  border-color: var(--accent-frontend);
+  color: var(--accent-frontend);
+  background: rgba(var(--bg-elevated-rgb), 0.6);
+  box-shadow: 0 0 0 3px rgba(var(--bg-elevated-rgb), 0.25);
+}
+
+.nav-logo {
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  color: var(--text);
+}
+
+.nav-logo-bracket {
+  color: var(--accent-frontend);
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.nav-links a {
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-frontend);
+  transition: width 0.25s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.nav-cta {
+  font-size: 12.5px;
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 100px;
+  color: var(--text);
+  transition: border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  border-color: var(--accent-frontend);
+  color: var(--accent-frontend);
+}
+
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 8px;
+}
+
+.nav-burger span {
+  width: 20px;
+  height: 1.5px;
+  background: var(--text);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.nav-burger.is-open span:first-child {
+  transform: translateY(3.5px) rotate(45deg);
+}
+.nav-burger.is-open span:last-child {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
+.nav-mobile {
+  display: flex;
+  flex-direction: column;
+  background: rgba(var(--bg-elevated-rgb), 0.98);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 8px clamp(20px, 5vw, 32px) 20px;
+}
+
+.nav-mobile a {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-dim);
+  font-size: 13.5px;
+}
+
+.nav-mobile a:last-child {
+  border-bottom: none;
+  color: var(--accent-frontend);
+}
+
+@media (max-width: 860px) {
+  .nav-links,
+  .nav-cta {
+    display: none;
+  }
+  .nav-burger {
+    display: flex;
+  }
+}

@@ -1,0 +1,422 @@
+.proj-spiral-wrap {
+  margin-top: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.proj-spiral-track {
+  position: relative;
+  width: 100%;
+  /* widened alongside the bigger ring radius so side-facing cards don't clip */
+  max-width: 1080px;
+  /* height + perspective are set inline per-render (see Projects.jsx
+     useSpiralDims) so the ring's depth scales fluidly with viewport
+     width instead of snapping to a flat, non-3D layout on small
+     screens — these are just a pre-hydration/no-JS fallback. */
+  height: 640px;
+  perspective: 1700px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.proj-spiral-track:active {
+  cursor: grabbing;
+}
+
+.proj-spiral-ring {
+  position: relative;
+  z-index: 5;
+  /* width is set inline per-render alongside the card width */
+  width: 240px;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.proj-spiral-slot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* width/margin are set inline per-render (see Projects.jsx
+     useSpiralDims) so the tile scales with the fluid card width instead
+     of a fixed 240px — these are just a fallback. */
+  width: 240px;
+  margin-left: -120px;
+  margin-top: -105px;
+  /* opacity/pointer-events/z-index are written directly every frame by
+     the animation loop — no CSS transition here, it would just fight
+     those per-frame writes and cost extra paint work. */
+}
+
+.proj-spiral-tip {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* ---- closed ring tile ---- */
+.proj-card {
+  position: relative;
+  padding: 24px 22px;
+  overflow: hidden;
+  cursor: pointer;
+  will-change: transform;
+  min-height: 210px;
+  width: 100%;
+  /* A curved monitor's screen wraps CONCAVE toward the viewer — the
+     panel bends away at center, edges reach forward. This card does
+     the opposite: a convex lens/barrel that bulges OUTWARD at the
+     center of the top and bottom edges, straight sides. clip-path
+     (not border-radius) gives an actual continuous bow across the
+     full edge rather than just rounding the corners — it clips this
+     element and everything painted inside it, so the child layers
+     (panel-bg, wave, spot, sheen) don't need their own shape.
+     Percentage points keep it responsive to the card's own size. */
+  clip-path: polygon(
+    0% 14%, 12% 8%, 25% 3.5%, 37% 1%, 50% 0%, 63% 1%, 75% 3.5%, 88% 8%, 100% 14%,
+    100% 86%, 88% 92%, 75% 96.5%, 63% 99%, 50% 100%, 37% 99%, 25% 96.5%, 12% 92%, 0% 86%
+  );
+}
+
+.proj-card:focus-visible {
+  outline: 2px solid var(--accent-frontend);
+  outline-offset: 3px;
+}
+
+/* Glass sheen + edge vignette, sitting above everything else in the
+   card — a soft highlight near the top and a darkened rim at the
+   edges, the way light falls across curved glass. mix-blend-mode
+   keeps it from flattening the text/wave colors underneath. */
+.proj-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(130% 55% at 50% -8%, rgba(255, 255, 255, 0.22), transparent 60%),
+    radial-gradient(150% 120% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.4) 100%);
+  mix-blend-mode: overlay;
+}
+
+.proj-panel-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  border: 1.5px solid var(--border);
+  transition: border-color 0.25s ease;
+}
+
+.proj-card:hover .proj-panel-bg {
+  border-color: var(--card-accent, var(--accent-frontend));
+}
+
+/* single shared wave canvas per card */
+.proj-card-wave {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  filter: brightness(1) saturate(1);
+  transition: filter 0.35s ease;
+}
+.proj-card:hover .proj-card-wave {
+  filter: brightness(1.45) saturate(1.3) drop-shadow(0 0 22px var(--card-accent));
+}
+
+.proj-spot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(
+    320px circle at var(--mx, 50%) var(--my, 50%),
+    var(--card-accent, var(--accent-frontend)) 0%,
+    transparent 62%
+  );
+  mix-blend-mode: screen;
+  filter: opacity(0.16);
+}
+
+.cat-frontend { --card-accent: var(--accent-infra); }
+.cat-backend { --card-accent: var(--accent-infra); }
+.cat-data { --card-accent: var(--accent-infra); }
+.cat-infra { --card-accent: var(--accent-infra); }
+
+
+/* ---- closed tile face — replaces the old spiral coil ---- */
+.proj-face {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  text-align: center;
+}
+
+.proj-face-name {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.proj-face-hint {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--card-accent);
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
+}
+
+.proj-card:hover .proj-face-hint {
+  opacity: 1;
+}
+
+/* ---- shared detail content (used inside the modal) ---- */
+.proj-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.proj-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.proj-index {
+  font-size: 11px;
+  color: var(--card-accent);
+}
+
+.proj-status {
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.proj-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-infra);
+  box-shadow: 0 0 6px var(--accent-infra);
+}
+
+.proj-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.proj-name--lg {
+  font-size: 24px;
+}
+
+.proj-tagline {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+
+.proj-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.proj-points li {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text-dim);
+  padding-left: 12px;
+  position: relative;
+}
+
+.proj-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 1px;
+  background: var(--card-accent);
+}
+
+.proj-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.proj-expand-btn {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  padding: 5px 10px;
+  border-radius: 100px;
+  margin-bottom: 5px;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.proj-expand-btn:hover {
+  border-color: var(--card-accent);
+  color: var(--card-accent);
+  transform: translateY(-1px);
+}
+
+.proj-log-wrap {
+  overflow: hidden;
+}
+
+.proj-log {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--accent-infra);
+}
+
+.proj-log-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.proj-log-cursor {
+  display: inline-block;
+  width: 6px;
+  height: 12px;
+  background: var(--accent-infra);
+  vertical-align: -1px;
+  margin-left: 2px;
+}
+
+.proj-links {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-top: auto;
+}
+
+.proj-links a {
+  color: var(--text-dim);
+  transition: color 0.2s ease;
+}
+
+.proj-links a:hover {
+  color: var(--card-accent);
+}
+
+/* ---- fixed, viewport-centered detail window ----
+   Deliberately position: fixed + inset: 0 on the overlay, with the card
+   centered via flex — not absolute-inside-the-ring. That guarantees the
+   opened project always lands in the same spot on screen no matter which
+   loop of the spring (top/middle/bottom) was clicked. */
+.proj-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(var(--bg-elevated-rgb), 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.proj-modal-card {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: min(640px, 86vh);
+  overflow-y: auto;
+  padding: 34px 32px 30px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, rgba(24, 29, 42, 0.98), rgba(9, 11, 17, 0.98));
+  border: 1px solid var(--card-accent);
+  box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.65);
+}
+
+.proj-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 6px 12px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.proj-modal-close:hover {
+  color: var(--text);
+  border-color: var(--card-accent);
+}
+
+@media (max-width: 640px) {
+  .proj-modal-card {
+    padding: 28px 20px 24px;
+  }
+
+  .proj-name--lg {
+    font-size: 20px;
+  }
+}
+
+/* Small-screen tuning only — the ring itself keeps rotating in 3D at
+   every width (see Projects.jsx useSpiralDims), so this just trims
+   padding/type-size on the tiles and the fixed detail modal for
+   narrower viewports instead of flattening the spring into a static
+   list. */
+@media (max-width: 640px) {
+  .proj-card {
+    padding: 18px 16px;
+  }
+
+  .proj-face-name {
+    font-size: 16.5px;
+  }
+
+  .proj-spiral-tip {
+    padding: 0 12px;
+  }
+}

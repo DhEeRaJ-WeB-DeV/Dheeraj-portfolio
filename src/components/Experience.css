@@ -1,0 +1,111 @@
+.exp-list {
+  margin-top: 44px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.exp-item {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 20px;
+  padding-bottom: 40px;
+}
+
+.exp-item:last-child {
+  padding-bottom: 0;
+}
+
+.exp-rail {
+  display: flex;
+  justify-content: center;
+}
+
+/* static base line spanning the full list, behind items */
+.exp-track {
+  position: absolute;
+  top: 9px;
+  bottom: 9px;
+  left: 14px; /* centers on a 28px rail column */
+  width: 1px;
+  background: var(--border-soft);
+}
+
+/* animated overlay line, grows top-down with scroll */
+.exp-track-fill {
+  position: absolute;
+  top: 9px;
+  bottom: 9px;
+  left: 14px;
+  width: 1px;
+  background: var(--accent-infra);
+  transform-origin: top;
+  transform: scaleY(0); /* framer sets this via style, this is just a fallback */
+}
+
+.exp-node {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bg-base, transparent);
+  border: 2px solid var(--border-soft);
+  margin-top: 3px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.exp-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.exp-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.exp-role {
+  font-family: var(--font-display);
+  font-size: clamp(17px, 3.6vw, 19px);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.exp-org {
+  color: var(--text);
+  opacity: 0.85;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.exp-period {
+  color: var(--accent-infra);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.exp-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.exp-points li {
+  display: flex;
+  gap: 10px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  opacity: 0.88;
+}
+
+.exp-bullet {
+  color: var(--accent-infra);
+  flex-shrink: 0;
+}

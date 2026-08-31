@@ -1,0 +1,28 @@
+.universe-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.universe-bg canvas {
+  display: block;
+}
+.universe-bg{
+    position:fixed;
+    inset:0;
+}
+
+.universe-bg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+
+    background:
+    radial-gradient(
+        circle,
+        transparent 35%,
+        rgba(0,0,0,.45) 100%
+    );
+}
