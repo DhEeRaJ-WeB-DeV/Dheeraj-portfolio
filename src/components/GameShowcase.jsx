@@ -191,7 +191,7 @@ export default function GameShowcase() {
     const focusTimer = setTimeout(focusGame, 150);
     return () => clearTimeout(focusTimer);
   }, [open]);
-
+const tagline = "Enough scrolling. Time to play.";
   return (
     <motion.div
       className="game-showcase"
@@ -211,9 +211,43 @@ export default function GameShowcase() {
         <TitleBanner mirrored />
       </div>
 
-      <p className="game-showcase-tagline">Got bored? Try playing this game.</p>
+     
+
+<motion.p className="game-showcase-tagline">
+  {tagline.split("").map((char, index) => (
+    <motion.span
+      key={index}
+      className="smoke-letter"
+      animate={{
+        opacity: [0.9, 1, 0.95, 1, 0.9],
+        filter: [
+          "brightness(1)",
+          "brightness(1.6)",
+          "brightness(1.15)",
+          "brightness(1.6)",
+          "brightness(1)",
+        ],
+        textShadow: [
+          "0 0 4px rgba(255,255,255,0.9), 0 0 10px rgba(255,255,255,0.5), 0 0 22px rgba(255,214,150,0.3)",
+          "0 0 8px rgba(255,255,255,1), 0 0 22px rgba(255,255,255,0.85), 0 0 44px rgba(255,214,150,0.6), 0 0 70px rgba(255,180,90,0.35)",
+          "0 0 6px rgba(255,255,255,0.95), 0 0 16px rgba(255,255,255,0.65), 0 0 32px rgba(255,214,150,0.4)",
+          "0 0 8px rgba(255,255,255,1), 0 0 22px rgba(255,255,255,0.85), 0 0 44px rgba(255,214,150,0.6), 0 0 70px rgba(255,180,90,0.35)",
+          "0 0 4px rgba(255,255,255,0.9), 0 0 10px rgba(255,255,255,0.5), 0 0 22px rgba(255,214,150,0.3)",
+        ],
+      }}
+      transition={{
+        duration: 4,
+        repeat: Infinity,
+        delay: index * 0.08,
+        ease: "easeInOut",
+      }}
+    >
+      {char === " " ? "\u00A0" : char}
+    </motion.span>
+  ))}
+</motion.p>
       <p className="game-showcase-note mono">
-        For the best experience, play on a desktop or laptop.
+        For the best experience, play on a PC or laptop.
       </p>
 
       <div className="game-showcase-flanked">

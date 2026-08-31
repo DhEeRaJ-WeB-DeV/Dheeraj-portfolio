@@ -244,10 +244,7 @@ function JellyLighting() {
 
 export default function CursorJellyfish({ active, origin }) {
   const { theme } = useTheme();
-<<<<<<< HEAD
   const { tier } = usePerf();
-=======
->>>>>>> 806618d63991c0e0182d420b08c40261ccf1a032
   const [visible, setVisible] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [tabHidden, setTabHidden] = useState(typeof document !== "undefined" ? document.hidden : false);
@@ -278,13 +275,8 @@ export default function CursorJellyfish({ active, origin }) {
     <div className="cursor-jellyfish-root" aria-hidden="true">
       <Canvas
         camera={{ fov: CAMERA_FOV, near: 0.1, far: 40 }}
-<<<<<<< HEAD
         dpr={[1, TIER_DPR_MAX[tier] ?? TIER_DPR_MAX.medium]}
         gl={{ antialias: tier !== "low", alpha: true }}
-=======
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
->>>>>>> 806618d63991c0e0182d420b08c40261ccf1a032
         frameloop={tabHidden ? "demand" : "always"}
         // react-three-fiber's Canvas sets `pointer-events: auto` as an
         // INLINE style on its own wrapper div whenever no custom

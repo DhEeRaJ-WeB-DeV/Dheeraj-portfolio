@@ -301,3 +301,25 @@
 .game-showcase-icon-btn:hover {
   background: rgba(0, 0, 0, 0.8);
 }
+
+.game-showcase-tagline {
+  display: inline-flex;
+  position: relative;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+}
+
+.smoke-letter {
+  display: inline-block;
+  position: relative;
+
+  /* Keep text completely sharp */
+  filter: none;
+  transform: none;
+
+  /* Don't let the browser blur the glyph */
+  -webkit-font-smoothing: antialiased;
+  backface-visibility: hidden;
+
+  will-change: opacity, transform;
+}
