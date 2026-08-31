@@ -46,6 +46,7 @@
   <!-- Health/mana potion buttons — touch-only (see .touch-only in
        styles.css), mirrors the R/T keyboard shortcuts. Sits above the
        action buttons so it doesn't crowd the attack/parry/jump thumb
+<<<<<<< HEAD
        cluster. Collapsed into a single combo button; long-pressing it
        reveals the two individual potion buttons (see 05_input.js
        setupPotionMenu). -->
@@ -84,6 +85,36 @@
         <img src="assets/touch_icons/attack_sword.webp" alt="" draggable="false">
       </div>
       <div class="tbtn" id="btnJump" aria-label="Jump">▲</div>
+=======
+       cluster. -->
+  <!-- Mobile controls use the supplied/reference game UI artwork.
+       The images are kept as standalone assets so they can be replaced
+       later without touching the game code. -->
+  <div id="potions" class="touch-only">
+    <div class="image-control potion-control" id="btnHealthPotion" role="button" aria-label="Use health potion">
+      <img src="assets/mobile_controls/potion.png" alt="Health potion">
+      <span class="control-count" id="mobileHealthCount">3</span>
+    </div>
+    <div class="image-control potion-control mana-control" id="btnManaPotion" role="button" aria-label="Use mana potion">
+      <img src="assets/mobile_controls/potion.png" alt="Mana potion">
+      <span class="control-count" id="mobileManaCount">2</span>
+    </div>
+  </div>
+
+  <div id="touch-controls">
+    <div id="joystick" class="image-control joystick-control" role="application" aria-label="Movement joystick">
+      <img src="assets/mobile_controls/joystick.png" alt="Movement joystick">
+      <span id="joystickKnob" aria-hidden="true"></span>
+    </div>
+    <div id="actions">
+      <div class="image-control action-control parry-control" id="btnParry" role="button" aria-label="Parry">🛡</div>
+      <div class="image-control action-control" id="btnAttack" role="button" aria-label="Attack">
+        <img src="assets/mobile_controls/attack.png" alt="Attack">
+      </div>
+      <div class="image-control action-control jump-control" id="btnJump" role="button" aria-label="Jump">
+        <img src="assets/mobile_controls/jump.png" alt="Jump">
+      </div>
+>>>>>>> 6c18afef32ebbf611bfe2a2309eb78586e17448f
     </div>
   </div>
 

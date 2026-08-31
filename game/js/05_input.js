@@ -106,6 +106,7 @@
 
   function setupTouchBtn(id, onDown, onUp){
     const el = document.getElementById(id);
+<<<<<<< HEAD
     const down = ev=>{ ev.preventDefault(); onDown(); };
     const up = ev=>{ ev.preventDefault(); if(onUp) onUp(); };
     el.addEventListener('touchstart', down, {passive:false});
@@ -247,6 +248,58 @@
   }
   setupPotionMenu();
 
+=======
+    if(!el) return;
+    const down = ev=>{ ev.preventDefault(); try{el.setPointerCapture?.(ev.pointerId);}catch(_){} onDown(); };
+    const up = ev=>{ ev.preventDefault(); if(onUp) onUp(); };
+    el.addEventListener('pointerdown', down, {passive:false});
+    el.addEventListener('pointerup', up, {passive:false});
+    el.addEventListener('pointercancel', up, {passive:false});
+    el.addEventListener('pointerleave', up, {passive:false});
+  }
+
+  // Image-based virtual joystick, using the same joystick artwork as the
+  // supplied/reference HUD. It continuously maps the thumb position to the
+  // existing ArrowLeft/ArrowRight movement keys.
+  const joystick = document.getElementById('joystick');
+  if(joystick){
+    let joyPointer = null;
+    const releaseJoystick = ev=>{
+      if(joyPointer !== null && ev && ev.pointerId !== joyPointer) return;
+      joyPointer = null;
+      keys['ArrowLeft']=false;
+      keys['ArrowRight']=false;
+    };
+    const moveJoystick = ev=>{
+      if(joyPointer !== ev.pointerId) return;
+      ev.preventDefault();
+      const r=joystick.getBoundingClientRect();
+      const x=(ev.clientX-r.left)/r.width-.5;
+      const dead=.16;
+      keys['ArrowLeft']=x < -dead;
+      keys['ArrowRight']=x > dead;
+    };
+    joystick.addEventListener('pointerdown', ev=>{
+      ev.preventDefault();
+      joyPointer=ev.pointerId;
+      try{joystick.setPointerCapture(ev.pointerId);}catch(_){}
+      moveJoystick(ev);
+    }, {passive:false});
+    joystick.addEventListener('pointermove', moveJoystick, {passive:false});
+    joystick.addEventListener('pointerup', releaseJoystick, {passive:false});
+    joystick.addEventListener('pointercancel', releaseJoystick, {passive:false});
+    joystick.addEventListener('lostpointercapture', releaseJoystick, {passive:false});
+  }
+
+  setupTouchBtn('btnJump', ()=>keys['Space']=true, ()=>keys['Space']=false);
+  setupTouchBtn('btnAttack', ()=>keys['KeyE']=true, ()=>keys['KeyE']=false);
+  setupTouchBtn('btnParry', ()=>keys['KeyQ']=true, ()=>keys['KeyQ']=false);
+  // Touch-only (see .touch-only in styles.css) — same R/T keys the
+  // keyboard already uses, so the existing latch logic in 08_update.js
+  // (one potion per press, not one per frame held) just works.
+  setupTouchBtn('btnHealthPotion', ()=>keys['KeyR']=true, ()=>keys['KeyR']=false);
+  setupTouchBtn('btnManaPotion', ()=>keys['KeyT']=true, ()=>keys['KeyT']=false);
+>>>>>>> 6c18afef32ebbf611bfe2a2309eb78586e17448f
   canvas.addEventListener('mousedown', ()=>{ keys['KeyE']=true; });
   canvas.addEventListener('mouseup', ()=>{ keys['KeyE']=false; });
 
