@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Sword Quest</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="wrap">
+  <canvas id="gameCanvas" width="1200" height="450"></canvas>
+  <div id="snakeDomLayer" aria-hidden="true"></div>
+
+  <!-- First-play intro: replace assets/intro/game_intro.mp4 with a new video
+       whenever you want to change the intro. The filename/path stays the same. -->
+  <div id="intro-card" class="hidden" aria-label="Game introduction">
+    <video id="introVideo" playsinline preload="auto">
+      <source src="assets/intro/game_intro.mp4" type="video/mp4">
+      Your browser does not support HTML5 video.
+    </video>
+    <div class="intro-overlay">
+      <div class="intro-skip-hint">Press <kbd>Enter</kbd> to skip</div>
+      <button id="introSkipBtn" class="intro-skip-btn" type="button" aria-label="Skip intro">Skip ▶</button>
+      <button id="introUnmuteBtn" class="game-ui-btn intro-unmute-btn hidden" type="button" aria-label="Unmute intro">🔇</button>
+    </div>
+  </div>
+  <button id="fullscreenBtn" class="game-ui-btn" type="button" aria-label="Toggle fullscreen">⛶</button>
+  <button id="pauseBtn" class="game-ui-btn pause-ui-btn" type="button" aria-label="Pause game" title="Pause (P)">Ⅱ</button>
+
+  <div id="hud" aria-label="Player status">
+    <div class="player-hud-art">
+      <img src="assets/player_hud.png" alt="Player health and mana HUD">
+      <div class="hud-missing health-missing" id="healthMissing"></div>
+      <div class="mana-fill" id="manaFill"></div>
+      <div class="hud-missing mana-missing" id="manaMissing"></div>
+      <div class="potion-count health-potion-count" id="healthPotionCount">3</div>
+      <div class="potion-count mana-potion-count" id="manaPotionCount">2</div>
+      <div class="potion-key health-potion-key">R</div>
+      <div class="potion-key mana-potion-key">T</div>
+    </div>
+    <div class="stat hud-extra">Gems: <span id="gemCount">0</span> / <span id="gemTotal">0</span></div>
+    <div class="stat hud-extra">Level <span id="levelNum">1</span> / 3</div>
+  </div>
+
+  <!-- Health/mana potion button — touch-only (see .touch-only in
+       styles.css), mirrors the R/T keyboard shortcuts. A single combo
+       button by default; long-press pops out separate Health/Mana
+       buttons (see 05_input.js setupPotionMenu) so a stray tap can't
+       waste a potion. Sits above the action buttons so it doesn't crowd
+       the attack/parry/fireball thumb cluster. -->
+  <div id="potions" class="touch-only">
+    <div id="potionSubButtons">
+      <div class="tbtn potion-tbtn health-sub" id="btnHealthPotion" aria-label="Use health potion">
+        <img src="assets/touch_icons/health_potion.webp" alt="" draggable="false">
+      </div>
+      <div class="tbtn potion-tbtn mana-sub" id="btnManaPotion" aria-label="Use mana potion">
+        <img src="assets/touch_icons/mana_potion.webp" alt="" draggable="false">
+      </div>
+    </div>
+    <div class="tbtn potion-tbtn potion-main" id="btnPotionMain" aria-label="Potions — hold to choose Health or Mana">
+      <img src="assets/touch_icons/potion_combo.webp" alt="" draggable="false">
+    </div>
+  </div>
+
+  <!-- Movement joystick + attack/parry/fireball buttons — touch-only,
+       hidden entirely on laptop/desktop (mouse + keyboard players use
+       WASD/arrows, Space, E, Q, F exactly as before; see .touch-only in
+       styles.css and 00_quality.js for the touch-device detection). -->
+  <div id="touch-controls" class="touch-only">
+    <div id="joystick" aria-label="Move and jump">
+      <div id="joystickBase">
+        <div id="joystickKnob"></div>
+      </div>
+    </div>
+    <div id="actions">
+      <div class="tbtn" id="btnParry" aria-label="Parry">
+        <img src="assets/touch_icons/parry_shield.webp" alt="" draggable="false">
+      </div>
+      <div class="tbtn" id="btnAttack" aria-label="Attack">
+        <img src="assets/touch_icons/attack_sword.webp" alt="" draggable="false">
+      </div>
+      <div class="tbtn" id="btnFireball" aria-label="Fireball">
+        <img src="assets/touch_icons/fireball_hand.webp" alt="" draggable="false">
+      </div>
+    </div>
+  </div>
+
+  <div id="pause-card" class="hidden">
+    <h1>PAUSED</h1>
+    <p>The game is paused.</p>
+    <div class="pause-actions">
+      <button class="btn" id="resumeBtn">Resume</button>
+      <button class="btn secondary-btn" id="restartPauseBtn">Restart</button>
+    </div>
+    <div class="pause-hint"><kbd>P</kbd> to resume/pause</div>
+  </div>
+
+  <div id="controls-card" class="hidden">
+    <h1>READY YOUR BLADE</h1>
+    <p>Before you descend, here's how to fight:</p>
+    <div class="controls-list">
+      <div><kbd>A</kbd>/<kbd>D</kbd> or <kbd>←</kbd>/<kbd>→</kbd> — move &nbsp; <kbd>Space</kbd>/<kbd>W</kbd> — jump (double-jump in air)</div>
+      <div><kbd>E</kbd> or click — swing sword &nbsp; <kbd>F</kbd> — throw fireball (20 mana) &nbsp; <kbd>Q</kbd> — parry (time it to an enemy's swing to deflect it!) &nbsp; <kbd>R</kbd> — health potion &nbsp; <kbd>T</kbd> — mana potion</div>
+      <div class="touch-only-block mobile-controls-hint">Joystick (bottom-left) — move, push up to jump &nbsp; Shield/Sword/Flame buttons — parry, attack, fireball &nbsp; Hold the potion button to choose Health or Mana</div>
+    </div>
+    <button class="btn" id="beginPlayBtn">Enter the Highlands</button>
+  </div>
+
+  <div id="title-card">
+    <h1>PENITENT'S BLADE</h1>
+    <p>Descend through the bleeding highlands, survive the moonlit cathedral courtyard, then enter the final throne hall and face the cathedral boss.</p>
+    <div class="controls-list">
+      <div><kbd>A</kbd>/<kbd>D</kbd> or <kbd>←</kbd>/<kbd>→</kbd> — move &nbsp; <kbd>Space</kbd>/<kbd>W</kbd> — jump (double-jump in air)</div>
+      <div><kbd>E</kbd> or click — swing sword &nbsp; <kbd>F</kbd> — throw fireball (20 mana) &nbsp; <kbd>Q</kbd> — parry (time it to an enemy's swing to deflect it!) &nbsp; <kbd>R</kbd> — health potion &nbsp; <kbd>T</kbd> — mana potion</div>
+      <div class="touch-only-block mobile-controls-hint">Joystick (bottom-left) — move, push up to jump &nbsp; Shield/Sword/Flame buttons — parry, attack, fireball &nbsp; Hold the potion button to choose Health or Mana</div>
+    </div>
+    <button class="btn" id="startBtn">Begin</button>
+  </div>
+
+  <div id="level-card" class="hidden">
+    <h1 id="levelCardTitle">GATE OPENED</h1>
+    <p id="levelStats">The first ward falls behind you. A deeper, moonlit courtyard awaits beyond the gate.</p>
+    <ul id="bossTips" class="boss-tips hidden">
+      <li>Phase 1: get in close and hit its <strong>head</strong> with <kbd>E</kbd> — body shots do nothing.</li>
+      <li>Projectiles flash gold right before they arrive — that's your parry cue. Time <kbd>Q</kbd> to it.</li>
+      <li>A parried falling blade flies straight back into its head — a free hit, and worth practicing.</li>
+      <li>Below half health it dives into <strong>Phase 2</strong>: melee stops working, so keep landing parried blades to deal damage.</li>
+      <li>Phase 2 also raises fire-serpents from the floor in a line of lanes — only one lane stays safe. Watch the warning and get there before it erupts.</li>
+      <li>Fire-serpents can also ambush from the sides in Phase 1 — don't let one pin you against a wall.</li>
+    </ul>
+    <button class="btn" id="continueBtn">Descend</button>
+  </div>
+
+  <div id="win-card" class="hidden">
+    <h1 id="winTitle">SHRINE REACHED</h1>
+    <p id="winStats"></p>
+    <button class="btn" id="restartWinBtn">Play Again</button>
+  </div>
+
+  <div id="lose-card" class="hidden">
+    <h1>YOU FELL</h1>
+    <p>The bleeding highlands claim another penitent.</p>
+    <button class="btn" id="restartLoseBtn">Try Again</button>
+  </div>
+</div>
+  <script src="js/00_quality.js"></script>
+  <script src="js/00_audio.js"></script>
+  <script src="js/01_game_core.js"></script>
+  <script src="js/02_thornwalker.js"></script>
+  <script src="js/03_bat.js"></script>
+  <script src="js/03b_snake.js"></script>
+  <script src="js/03c_phase2_snake.js"></script>
+  <script src="js/04_hero.js"></script>
+  <script src="js/05_input.js"></script>
+  <script src="js/06_combat.js"></script>
+  <script src="js/07_collision.js"></script>
+  <script src="js/08_update.js"></script>
+  <script src="js/09_render.js"></script>
+  <script src="js/10_main.js"></script>
+</body>
+</html>
