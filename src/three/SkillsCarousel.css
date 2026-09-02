@@ -1,0 +1,265 @@
+.skills-carousel {
+  width: 100%;
+  height: 120px;
+  margin-bottom: 12px;
+  margin-top: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .skills-carousel {
+    margin-top: 40px;
+  }
+}
+
+.skills-carousel-track {
+  width: 100%;
+  height: 100%;
+  perspective: 1100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.skills-carousel-track:active {
+  cursor: grabbing;
+}
+
+.skills-carousel-ring {
+  position: relative;
+  /* width/height are set inline per-render (see useCarouselDims in
+     SkillsCarousel.jsx) so the ring's card size shrinks fluidly on
+     narrower viewports — these are just a pre-hydration fallback. */
+  width: 100px;
+  height: 120px;
+  transform-style: preserve-3d;
+}
+
+.carousel-card {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 14px;
+  background: rgba(10, 14, 24, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(6px);
+  user-select: none;
+  cursor: pointer;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  backface-visibility: hidden;
+}
+
+.carousel-card img {
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.25));
+}
+
+.carousel-card span {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+
+.carousel-card-monogram {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Icon/label/padding scale down alongside the fluid card width on
+   narrower viewports — keeps small cards from looking like oversized
+   type/icons crammed into a shrunk box. */
+@media (max-width: 640px) {
+  .carousel-card {
+    gap: 5px;
+    border-radius: 11px;
+  }
+  .carousel-card img,
+  .carousel-card-monogram {
+    width: 22px;
+    height: 22px;
+  }
+  .carousel-card span {
+    font-size: 9.5px;
+  }
+}
+
+@media (max-width: 420px) {
+  .carousel-card img,
+  .carousel-card-monogram {
+    width: 19px;
+    height: 19px;
+  }
+  .carousel-card span {
+    font-size: 8.5px;
+  }
+}
+
+.skills .section-head-3d {
+  position: relative;
+  z-index: 2; /* keeps the heading/sub-text reliably above the carousel */
+}
+
+.carousel-card.cat-frontend { border-color: color-mix(in srgb, var(--accent-frontend) 45%, transparent); }
+.carousel-card.cat-backend  { border-color: color-mix(in srgb, var(--accent-backend) 45%, transparent); }
+.carousel-card.cat-data     { border-color: color-mix(in srgb, var(--accent-data) 45%, transparent); }
+.carousel-card.cat-infra    { border-color: color-mix(in srgb, var(--accent-infra) 45%, transparent); }
+
+/* hover: brighten the border + add a soft glow in the category color */
+.carousel-card.cat-frontend:hover {
+  border-color: var(--accent-frontend);
+  box-shadow: 0 0 16px 1px color-mix(in srgb, var(--accent-frontend) 55%, transparent);
+}
+.carousel-card.cat-backend:hover {
+  border-color: var(--accent-backend);
+  box-shadow: 0 0 16px 1px color-mix(in srgb, var(--accent-backend) 55%, transparent);
+}
+.carousel-card.cat-data:hover {
+  border-color: var(--accent-data);
+  box-shadow: 0 0 16px 1px color-mix(in srgb, var(--accent-data) 55%, transparent);
+}
+.carousel-card.cat-infra:hover {
+  border-color: var(--accent-infra);
+  box-shadow: 0 0 16px 1px color-mix(in srgb, var(--accent-infra) 55%, transparent);
+}
+
+/* ==========================================================================
+   Detail modal — fixed, viewport-centered, styled to match the project
+   detail card (Projects.css .proj-modal-*). A real DOM-sized panel, not a
+   scaled-up 3D flip face, so the text always lays out at full readable
+   size instead of wrapping against the tiny 100px carousel tile.
+   ========================================================================== */
+.skill-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(var(--bg-elevated-rgb), 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.skill-modal-card {
+  position: relative;
+  width: min(360px, 100%);
+  padding: 30px 28px 26px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(24, 29, 42, 0.98), rgba(9, 11, 17, 0.98));
+  box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.65);
+}
+
+.skill-modal-card.cat-frontend { border: 1px solid var(--accent-frontend); }
+.skill-modal-card.cat-backend  { border: 1px solid var(--accent-backend); }
+.skill-modal-card.cat-data     { border: 1px solid var(--accent-data); }
+.skill-modal-card.cat-infra    { border: 1px solid var(--accent-infra); }
+
+.skill-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 6px 12px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.skill-modal-card.cat-frontend .skill-modal-close:hover { border-color: var(--accent-frontend); color: var(--text); }
+.skill-modal-card.cat-backend  .skill-modal-close:hover { border-color: var(--accent-backend);  color: var(--text); }
+.skill-modal-card.cat-data     .skill-modal-close:hover { border-color: var(--accent-data);     color: var(--text); }
+.skill-modal-card.cat-infra    .skill-modal-close:hover { border-color: var(--accent-infra);    color: var(--text); }
+
+.skill-modal-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.skill-modal-index {
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.skill-modal-icon {
+  width: 30px;
+  height: 30px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+}
+
+.skill-modal-monogram {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.skill-modal-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.skill-modal-detail {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  margin-bottom: 18px;
+}
+
+.skill-modal-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--text-dim);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 5px 12px;
+}
+
+@media (max-width: 640px) {
+  .skill-modal-card {
+    padding: 26px 20px 22px;
+  }
+  .skill-modal-title {
+    font-size: 20px;
+  }
+}
