@@ -1,0 +1,259 @@
+/* Fullscreen cloud cover/reveal, used when opening or closing the game.
+   Sits above absolutely everything — including the game overlay's own
+   controls — so it can mask a mount/unmount happening underneath it.
+   Styled as a dark, storm-lit cloud bank: near-black at the edges with
+   a bright, diffused break of light through the middle, and turbulent
+   billowing texture rather than flat fluffy puffs. */
+.cloud-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 10500;
+  overflow: hidden;
+  pointer-events: none;
+  background: #050506;
+}
+
+/* Solid-ish backing wash so there are no gaps between puffs — this is
+   also the layer whose animationend we listen to, since it's the
+   simplest single element to time the whole effect off of. Dark at the
+   corners, with a brighter diffused core where "light" breaks through
+   the cloud bank, echoing the reference photo. */
+.cloud-wash {
+  position: absolute;
+  inset: -5%;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(206, 208, 213, 0.97) 0%,
+    rgba(140, 143, 152, 0.97) 32%,
+    rgba(66, 68, 76, 0.98) 64%,
+    rgba(10, 10, 12, 1) 100%
+  );
+}
+
+.is-covering .cloud-wash {
+  animation: cloud-wash-in 0.7s cubic-bezier(0.3, 0.7, 0.35, 1) forwards;
+}
+
+.is-clearing .cloud-wash {
+  opacity: 1;
+  animation: cloud-wash-out 0.85s cubic-bezier(0.6, 0, 0.7, 0.3) forwards;
+}
+
+@keyframes cloud-wash-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cloud-wash-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Full-bleed turbulent texture — an SVG feTurbulence noise field shaped
+   into billowing grayscale clumps (see #storm-clouds in the JSX),
+   multiplied over the wash so the whole screen reads as a photographed
+   bank of storm cloud rather than a smooth gradient. A second, finer
+   layer adds close-up grain the same way a real cloud photo has detail
+   at every scale. Both are sized larger than the viewport and drift
+   slightly during the roll so it feels like moving cloud, not a static
+   fade. */
+.cloud-storm-texture {
+  position: absolute;
+  inset: -25%;
+  opacity: 0;
+  filter: url(#storm-clouds);
+  mix-blend-mode: overlay;
+  will-change: opacity, transform;
+}
+
+.cloud-storm-texture-fine {
+  inset: -15%;
+  filter: url(#storm-clouds-fine);
+  mix-blend-mode: soft-light;
+}
+
+.is-covering .cloud-storm-texture {
+  animation: storm-texture-in 0.9s cubic-bezier(0.3, 0.7, 0.35, 1) forwards;
+}
+.is-covering .cloud-storm-texture-fine {
+  animation-delay: 0.05s;
+}
+
+.is-clearing .cloud-storm-texture {
+  opacity: 1;
+  animation: storm-texture-out 1s ease-in forwards;
+}
+
+@keyframes storm-texture-in {
+  from {
+    opacity: 0;
+    transform: scale(1.1) translateY(3%);
+  }
+  to {
+    opacity: 0.85;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes storm-texture-out {
+  from {
+    opacity: 0.85;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.12) translateY(-4%);
+  }
+}
+
+/* Individual cloud puffs — dark, storm-lit blobs layered around the
+   edges so the wash reads as an actual bank of rolling cloud rather
+   than a flat color fade. Each has a brighter, lit core fading into
+   charcoal and then into nothing; the #storm-displace filter (a single
+   lightweight feDisplacementMap, applied per-puff) warps that gradient
+   edge into a torn, wispy outline instead of a clean circle. The heavy
+   multi-octave cloud texture itself lives only in the two full-bleed
+   .cloud-storm-texture layers below — piling the same expensive
+   feTurbulence onto every puff as well is what produced visible
+   compositing seams, so puffs stay to gradients + one cheap displace. */
+.cloud-puff {
+  position: absolute;
+  border-radius: 46%;
+  background: radial-gradient(
+    circle at 50% 38%,
+    rgba(214, 216, 222, 0.95) 0%,
+    rgba(126, 129, 138, 0.88) 32%,
+    rgba(52, 53, 60, 0.7) 62%,
+    rgba(10, 10, 12, 0) 100%
+  );
+  filter: url(#storm-displace) blur(2px);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.cloud-puff-1 {
+  width: 70vw;
+  height: 70vw;
+  left: -18vw;
+  bottom: -32vh;
+}
+.cloud-puff-2 {
+  width: 64vw;
+  height: 64vw;
+  right: -20vw;
+  bottom: -28vh;
+}
+.cloud-puff-3 {
+  width: 52vw;
+  height: 52vw;
+  left: 22vw;
+  bottom: -42vh;
+}
+.cloud-puff-4 {
+  width: 58vw;
+  height: 58vw;
+  left: -12vw;
+  top: -26vh;
+}
+.cloud-puff-5 {
+  width: 58vw;
+  height: 58vw;
+  right: -14vw;
+  top: -22vh;
+}
+.cloud-puff-6 {
+  width: 48vw;
+  height: 48vw;
+  left: 32vw;
+  top: -32vh;
+}
+
+.is-covering .cloud-puff {
+  animation-name: cloud-roll-in;
+  animation-duration: 0.85s;
+  animation-timing-function: cubic-bezier(0.16, 0.8, 0.3, 1);
+  animation-fill-mode: forwards;
+}
+
+.is-covering .cloud-puff-1 {
+  animation-delay: 0s;
+}
+.is-covering .cloud-puff-2 {
+  animation-delay: 0.05s;
+}
+.is-covering .cloud-puff-3 {
+  animation-delay: 0.1s;
+}
+.is-covering .cloud-puff-4 {
+  animation-delay: 0.12s;
+}
+.is-covering .cloud-puff-5 {
+  animation-delay: 0.16s;
+}
+.is-covering .cloud-puff-6 {
+  animation-delay: 0.2s;
+}
+
+@keyframes cloud-roll-in {
+  from {
+    transform: translateY(14%) scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 0.92;
+  }
+}
+
+.is-clearing .cloud-puff {
+  opacity: 0.92;
+  animation-name: cloud-roll-out;
+  animation-duration: 0.95s;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+.is-clearing .cloud-puff-1 {
+  animation-delay: 0.08s;
+}
+.is-clearing .cloud-puff-2 {
+  animation-delay: 0.02s;
+}
+.is-clearing .cloud-puff-3 {
+  animation-delay: 0.14s;
+}
+.is-clearing .cloud-puff-4 {
+  animation-delay: 0s;
+}
+.is-clearing .cloud-puff-5 {
+  animation-delay: 0.06s;
+}
+.is-clearing .cloud-puff-6 {
+  animation-delay: 0.1s;
+}
+
+@keyframes cloud-roll-out {
+  from {
+    transform: translateY(0) scale(1);
+    opacity: 0.92;
+  }
+  to {
+    transform: translateY(-20%) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* Note: the site-wide prefers-reduced-motion rule in index.css already
+   forces every animation-duration down to 0.01ms, so under that setting
+   this whole effect resolves almost instantly on its own — the mount/
+   unmount underneath still never becomes visible mid-swap, since the
+   wash still passes through fully-opaque before clearing. */
