@@ -57,17 +57,20 @@ export const skillGroups = [
 ];
 
 export const experience = [
-  {
-    role: "Backend & Full-Stack Developer Intern",
-    org: "Sumeru Digital Solutions",
-    period: "May 2026 — Present",
-    points: [
-      "Designed and shipped 15+ production REST APIs with Node.js/Express.js — validation, error handling, and CRUD flows integrated with MongoDB.",
-      "Cut API response time 30–40% by introducing Redis caching on frequent MongoDB queries, reducing database load significantly.",
-      "Secured user sessions with JWT over HTTP-only cookies; validated every endpoint with Postman and Thunder Client.",
-      "Improved React frontend rendering 30% via memoization and lazy loading, shipped through agile Git/GitHub code review.",
-    ],
-  },
+ {
+  role: "Software Engineer",
+  org: "Sumeru Digital Solutions",
+  period: "June 2026 — Sep 2026",
+  points: [
+    "Designed and implemented 15+ production REST APIs using Node.js and Express.js, with robust validation, error handling, and CRUD operations integrated with MongoDB.",
+    "Built and integrated a multi-channel notification system supporting WhatsApp, email, and in-app notifications, with backend workflows for triggering and delivering notifications based on application events.",
+    "Integrated OAuth-based authentication and authorization, implementing secure user access and authentication flows across the application.",
+    "Designed and optimized MongoDB database queries and data-access logic to efficiently retrieve and manage application data.",
+    "Diagnosed and resolved API/database integration issues by analyzing logs and reproducing failures in test environments prior to deployment.",
+    "Troubleshot and validated API endpoints using Postman and Thunder Client.",
+    "Collaborated through Git/GitHub using Agile development practices, code reviews, and team-based development workflows.",
+  ],
+},
   {
     role: "Web Developer",
       org: "Mind Matrix",
@@ -139,7 +142,9 @@ export const projects = [
       "Keeping admin, recruiter, and candidate portals on one codebase without the REST API turning into a permissions maze.",
     ],
     links: { github: "https://github.com/DhEeRaJ-WeB-DeV/AI-Based-Interview-Platform", 
-            docker: "https://hub.docker.com/repositories/dheeraj5559" },
+      demo: "https://ai-based-interview-platform-akash-rs-projects-389e4c72.vercel.app/",
+            docker: "https://hub.docker.com/repositories/dheeraj5559"
+           },
     accent: "data",
     status: "SHIPPED",
   },

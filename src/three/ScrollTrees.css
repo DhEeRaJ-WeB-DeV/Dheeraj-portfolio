@@ -20,7 +20,7 @@
    next to the centered content column. The component also unmounts entirely
    below this breakpoint (see ScrollTrees.jsx) so the WebGL context isn't
    kept alive for nothing; this media query is a defensive fallback. */
-@media (max-width: 1300px) {
+@media (max-width: 860px) {
   .scroll-trees-root {
     display: none;
   }

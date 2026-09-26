@@ -123,7 +123,7 @@ export default function ScrollTrees() {
   const [reduceMotion, setReduceMotion] = useState(false);
   const [tabHidden, setTabHidden] = useState(typeof document !== "undefined" ? document.hidden : false);
   const [isNarrow, setIsNarrow] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 1300 : false
+    typeof window !== "undefined" ? window.innerWidth < 860 : false
   );
 
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function ScrollTrees() {
       setTabHidden(document.hidden);
     }
     function onResize() {
-      setIsNarrow(window.innerWidth < 1300);
+      setIsNarrow(window.innerWidth < 860);
     }
 
     document.addEventListener("visibilitychange", onVisibilityChange);

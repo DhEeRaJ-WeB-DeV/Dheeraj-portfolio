@@ -4,7 +4,10 @@ import { projects } from "../data/resume";
 import useTilt from "../hooks/useTilt";
 import { useTheme } from "../theme.jsx";
 import ErrorBoundary from "./ErrorBoundary.jsx";
+import useIsMobileView from "../hooks/useIsMobileView";
+import { FiFolder } from "react-icons/fi";
 import "./Projects.css";
+import "./MobileCards.css";
 
 // Mirrors the isNarrow/mobile check used elsewhere (ProjectsDnaScene,
 // ScrollTunnelBackground, etc.) — under 768px or a coarse (touch)
@@ -556,10 +559,54 @@ function ProjectsSpiral({ sectionInView, activeIndex, setActiveIndex }) {
   );
 }
 
+// Mobile-only replacement for the 3D spring: a plain stacked list of
+// cards (no WebGL, no drag/spin, no entrance animation). Tapping a card
+// opens the same detail modal the desktop tiles open.
+const MOBILE_STACK_PREVIEW = 4;
+
+function MobileProjectCards({ onOpen }) {
+  return (
+    <div className="m-card-list">
+      {projects.map((p, i) => {
+        const shown = p.stack.slice(0, MOBILE_STACK_PREVIEW);
+        const extra = p.stack.length - shown.length;
+        return (
+          <button
+            key={p.id}
+            type="button"
+            className="m-card"
+            onClick={() => onOpen(i)}
+            aria-label={`Open ${p.name} details`}
+          >
+            <div className="m-card-head">
+              <span className="m-card-icon" aria-hidden="true">
+                <FiFolder />
+              </span>
+              <span className="m-status">{p.status}</span>
+            </div>
+            <h3 className="m-card-title">{p.name}</h3>
+            <p className="m-card-text">{p.tagline}</p>
+            <div className="m-chips">
+              {shown.map((s) => (
+                <span key={s} className="m-chip">
+                  {s}
+                </span>
+              ))}
+              {extra > 0 && <span className="m-chip">+{extra}</span>}
+            </div>
+            <span className="m-card-more">View details</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function Projects() {
   const sectionRef = useRef(null);
   const sectionInView = useInView(sectionRef, { once: false, margin: "-80px 0px -80px 0px" });
   const [activeIndex, setActiveIndex] = useState(null);
+  const isMobileView = useIsMobileView();
 
   // Derived from resume.js instead of a hardcoded "Three coiled panels" —
   // stays correct as projects are added to (or removed from) that file.
@@ -590,18 +637,22 @@ export default function Projects() {
           <div className="section-3d-canvas"></div>
         </div>
 
-        <motion.div
-          variants={assemblyVariants}
-          initial="hidden"
-          animate={sectionInView ? "visible" : "hidden"}
-          transition={{ type: "spring", stiffness: 70, damping: 16, mass: 1 }}
-        >
-          <ProjectsSpiral
-            sectionInView={sectionInView}
-            activeIndex={activeIndex}
-            setActiveIndex={setActiveIndex}
-          />
-        </motion.div>
+        {isMobileView ? (
+          <MobileProjectCards onOpen={setActiveIndex} />
+        ) : (
+          <motion.div
+            variants={assemblyVariants}
+            initial="hidden"
+            animate={sectionInView ? "visible" : "hidden"}
+            transition={{ type: "spring", stiffness: 70, damping: 16, mass: 1 }}
+          >
+            <ProjectsSpiral
+              sectionInView={sectionInView}
+              activeIndex={activeIndex}
+              setActiveIndex={setActiveIndex}
+            />
+          </motion.div>
+        )}
       </div>
 
       <AnimatePresence>

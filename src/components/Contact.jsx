@@ -10,8 +10,10 @@ import { motion } from "framer-motion";
 import { profile } from "../data/resume";
 import "./Contact.css";
 import GameShowcase from "./GameShowcase";
+import useIsMobileView from "../hooks/useIsMobileView";
 
 export default function Contact() {
+  const isMobile = useIsMobileView();
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
@@ -60,7 +62,7 @@ export default function Contact() {
   >
     <FiGithub className="contact-link-icon" />
     <span className="contact-link-label">GITHUB</span>
-    github.com/dheerajsure
+    github.com/DhEeRaJ-WeB-DeV
   </a>
 
   <a
@@ -82,7 +84,7 @@ export default function Contact() {
   >
     <FiInstagram className="contact-link-icon" />
     <span className="contact-link-label">INSTAGRAM</span>
-    @dheerajsure
+    dheeraj.s_005
   </a>
 </div>
         </div>
@@ -138,7 +140,8 @@ export default function Contact() {
           </div>
         </motion.form>
       </div>
-      <GameShowcase />
+      {/* The game is desktop-only — skipped entirely on mobile. */}
+      {!isMobile && <GameShowcase />}
     </section>
   );
 }
